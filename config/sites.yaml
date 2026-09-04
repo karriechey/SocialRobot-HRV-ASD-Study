@@ -1,0 +1,15 @@
+# Site -> timezone and metadata.
+# Created: 2026-09-03
+# Last updated: 2026-09-03
+#
+# The only place a timezone literal is allowed to appear. Every conversion looks
+# a participant's zone up through here (or through the per-participant override
+# column in config/participants.csv). See docs/timezone_policy.md.
+
+sites:
+  depaul:
+    display_name: DePaul University
+    timezone: America/Chicago
+  clemson:
+    display_name: Clemson University
+    timezone: America/New_York

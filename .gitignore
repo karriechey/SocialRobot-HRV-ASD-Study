@@ -1,0 +1,35 @@
+# =====================================================================
+# Research data never enters version control.
+#
+# This repository shares a directory with the 17 GB raw data tree, and the
+# participant folder names under data/ contain real first names. Nothing under
+# data/ is trackable, and no file that maps an analysis ID to one of those paths
+# is trackable either.
+# =====================================================================
+
+data/
+**/data/
+results/
+!results/.gitkeep
+
+# Local, machine-specific config that holds real paths / identifying values.
+# The committed config/participants.csv holds analysis IDs only.
+*.local.csv
+*.local.yaml
+config/participants.local.csv
+
+# Participant data file types, wherever they land
+*.avro
+*.xlsx
+*.xls
+*.csv
+# the ID registry is code, not data (comment must be on its own line:
+# git has no trailing comments in .gitignore)
+!config/participants.csv
+
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+.DS_Store
+*.tmp

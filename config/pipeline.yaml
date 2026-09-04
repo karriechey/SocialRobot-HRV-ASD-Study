@@ -1,0 +1,68 @@
+# Analysis parameters. Every number the pipeline depends on lives here, so a run
+# is described by this file plus the raw inputs.
+# Created: 2026-09-03
+# Last updated: 2026-09-03
+#
+# Values marked PROVISIONAL are carried over from the previous DePaul HRV study
+# and have NOT been justified for SAR. See docs/open_questions.md item 7.
+
+paths:
+  raw_root: data              # read-only; never written to by any stage
+  csv_root: data/interim
+  results_root: results
+
+# Guard, enforced in src/config.py. The raw participant folders are named with
+# real first names, so the committed participants.csv must leave wearable_folder
+# blank and take paths from the gitignored participants.local.csv instead.
+# Setting this true disables that check. Do not, unless the data folders have
+# been renamed to non-identifying codes.
+allow_paths_in_committed_config: false
+
+signal:
+  original_fs_hz: 64          # Empatica EmbracePlus BVP native rate
+  upsample_fs_hz: 240         # PROVISIONAL. Swetha used 256, previous pipeline 240.
+  bandpass_low_hz: 0.4
+  bandpass_high_hz: 8.0
+  bandpass_order: 4
+  roll_std_window_s: 0.650
+  gap_split_factor: 5.0       # split the series where spacing > factor/original_fs
+  invert_bvp: true            # Swetha's pipeline used PPG = -bvp; make it explicit
+
+peak_detector: adt            # adt | rsd  -- see docs/detector_comparison_adt_rsd.md
+
+adt:
+  drop_index_zero: true       # DECISION PENDING. See docs/adt_audit.md.
+
+rsd:
+  prominence: 0.5             # PROVISIONAL, tuned per participant in the prior study
+  min_ibi_s: 0.33
+  max_ibi_s: 1.5
+
+ibi_validity:
+  min_s: 0.40                 # PROVISIONAL (150 BPM)
+  max_s: 1.15                 # matches the original SAR upper bound
+  mateo_laguna:
+    window_beats: 300
+    xi: 4.3
+    max_threshold: 1.0
+  relative_deviation:
+    enabled: false            # previous-pipeline rule; off by default for SAR
+    rel_threshold: 0.20
+    window_beats: 5
+  invalidate_neighbors: true
+
+windows:
+  length_s: 60
+  overlap: none               # non-overlapping. Not configurable by design.
+  min_valid_ibi: 5            # PROVISIONAL
+  min_coverage: 0.50          # PROVISIONAL
+
+quality:
+  baseline_motion_max_g: 0.050   # PROVISIONAL
+  baseline_wear_min_pct: 50.0    # PROVISIONAL
+  apply_motion_gate_to_task_windows: false   # carried, not applied
+
+spikes:
+  thresholds_n: [1, 2, 3]
+  directions: [down, up]
+  min_windows: 1
